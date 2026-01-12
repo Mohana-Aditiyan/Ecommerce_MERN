@@ -1,0 +1,172 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;800&display=swap");
+
+:root {
+  --main-color: #6dd5ed;
+  --secondary-color: #2193b0;
+  --gradient: linear-gradient(135deg, var(--main-color), var(--secondary-color));
+}
+
+.pageWrapper {
+  min-height: 100vh;
+  background-color: #f4f6f8;
+  padding: 40px 20px;
+  font-family: "Nunito", sans-serif;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 40px;
+  color: var(--secondary-color);
+  font-weight: 800;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.imageWrapper {
+  position: relative;
+}
+
+.imageWrapper img {
+  width: 100%;
+  /* height: 200px; */
+  object-fit: cover;
+}
+
+.discountBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--gradient);
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 20px;
+}
+
+.cardBody {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.cardBody h3 {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.category {
+  font-size: 14px;
+  color: #777;
+}
+
+.description {
+  font-size: 14px;
+  color: #555;
+  flex-grow: 1;
+}
+
+.priceSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.oldPrice {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 14px;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--secondary-color);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .title {
+    font-size: 24px;
+  }
+
+  .imageWrapper img {
+    height: 180px;
+  }
+}
+/* 🔹 Category Filter Bar */
+.filterBar {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.filterBtn {
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: 1px solid var(--secondary-color);
+  background-color: transparent;
+  color: var(--secondary-color);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filterBtn:hover {
+  background: var(--gradient);
+  color: #fff;
+}
+
+.active {
+  background: var(--gradient);
+  color: #fff;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+/* 🔹 Search Bar */
+.searchBarWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid var(--secondary-color);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  border-color: var(--main-color);
+  box-shadow: 0 0 10px rgba(33, 147, 176, 0.3);
+}
