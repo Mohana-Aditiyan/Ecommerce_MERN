@@ -18,7 +18,7 @@ export default function Header() {
           <span>Products</span>
         </Link>
 
-        <Link to="/create-product" className={styles.navItem}>
+        <Link to="/create" className={styles.navItem}>
           <i className="fas fa-plus-circle"></i>
           <span>Create Product</span>
         </Link>

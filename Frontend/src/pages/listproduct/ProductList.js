@@ -5,28 +5,30 @@ import styles from "./ProductList.module.css";
 import Button from "../../components/elements/Button";
 import ProductImage from "../../images/Product_Image.png";
 import axiosInstance from "../../axios/Axios";
-
+import Modal from "../../components/resuablemodal/Modal";
 
 export default function ProductList() {
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [categories, setCategories] = useState(["All"]);
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchTerm, setSearchTerm] = useState("");
+const [products, setProducts] = useState([]);
+const [filteredProducts, setFilteredProducts] = useState([]);
+const [categories, setCategories] = useState(["All"]);
+const [selectedCategory, setSelectedCategory] = useState("All");
+const [searchTerm, setSearchTerm] = useState("");
+const [modalMessage, setModalMessage] = useState("");
+const [modalTitle, setModalTitle] = useState("Notice");
+const [modalOpen, setModalOpen] = useState(false); // ✅ FIX
 
-  // Fetch products from API
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axiosInstance.post("/api/products/list", {
-          category: "", // fetch all initially
+        const response = await axiosInstance.post("products/list", {
+          category: "",
           search: "",
         });
 
         setProducts(response.data || []);
         setFilteredProducts(response.data || []);
 
-        // Set categories dynamically
         const dynamicCategories = [
           "All",
           ...new Set(response.data.map((p) => p.category)),
@@ -40,22 +42,53 @@ export default function ProductList() {
     fetchProducts();
   }, []);
 
-  // Filter products on category or search change
-  useEffect(() => {
-    const filtered = products.filter((p) => {
-      const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
-      const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
+useEffect(() => {
+  const fetchFilteredProducts = async () => {
+    try {
+      const payload = {
+        category: selectedCategory === "All" ? "" : selectedCategory,
+        search: searchTerm,
+      };
 
-    setFilteredProducts(filtered);
-  }, [products, selectedCategory, searchTerm]);
+      const res = await axiosInstance.post("products/list", payload);
+
+      setFilteredProducts(res.data || []);
+    } catch (error) {
+      console.error("Filter API error:", error);
+    }
+  };
+
+  fetchFilteredProducts();
+}, [selectedCategory, searchTerm]);
+
+
+  // 🔥 Add to Cart API (STATIC PAYLOAD)
+  const handleAddToCart = async () => {
+    try {
+      const payload = {
+        user_id: 1,
+        product_id: 5,
+        quantity: 2,
+      };
+
+      const res = await axiosInstance.post("/cart/add", payload);
+      console.log("Add to Cart:", res.data);
+      setModalTitle("Success");
+      setModalMessage("Thanks for shopping with us! 🛍️ Your product has been added to the cart. This feature is currently under development and will be fully functional soon.");
+      setModalOpen(true);
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      setModalTitle("Error");
+      setModalMessage("Failed to add product!");
+      setModalOpen(true);
+    }
+  };
 
   return (
     <div className={styles.pageWrapper}>
       <h1 className={styles.title}>Our Products</h1>
 
-      {/* 🔹 Category Filter */}
+      {/* Category Filter */}
       <div className={styles.filterBar}>
         {categories.map((category) => (
           <button
@@ -70,7 +103,7 @@ export default function ProductList() {
         ))}
       </div>
 
-      {/* 🔹 Search Bar */}
+      {/* Search */}
       <div className={styles.searchBarWrapper}>
         <input
           type="text"
@@ -81,10 +114,12 @@ export default function ProductList() {
         />
       </div>
 
-      {/* 🔹 Product Grid */}
+      {/* Product Grid */}
       <div className={styles.grid}>
         {filteredProducts.length === 0 ? (
-          <p style={{ textAlign: "center", width: "100%" }}>No products found.</p>
+          <p style={{ textAlign: "center", width: "100%" }}>
+            No products found.
+          </p>
         ) : (
           filteredProducts.map((product) => {
             const discountedPrice =
@@ -103,22 +138,29 @@ export default function ProductList() {
                   <h3>{product.name}</h3>
                   <p className={styles.category}>{product.category}</p>
 
-                  <p className={styles.description}>
-                    {product.description}
-                  </p>
+                  <p className={styles.description}>{product.description}</p>
 
                   <div className={styles.priceSection}>
                     <span className={styles.oldPrice}>₹{product.price}</span>
                     <span className={styles.price}>₹{discountedPrice}</span>
                   </div>
 
-                  <Button>Add to Cart</Button>
+                  {/* 🔥 Add to Cart */}
+                  <Button onClick={handleAddToCart}>Add to Cart</Button>
                 </div>
               </div>
             );
           })
         )}
       </div>
+      {/* Modal */}
+      <Modal
+        show={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalTitle}
+      >
+        <p>{modalMessage}</p>
+      </Modal>
     </div>
   );
 }

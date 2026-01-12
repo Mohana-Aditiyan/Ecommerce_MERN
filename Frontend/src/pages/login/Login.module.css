@@ -120,3 +120,81 @@ form {
 .overlayRight {
   right: 0;
 }
+/* =======================
+   RESPONSIVE DESIGN
+========================== */
+
+/* Tablets (≤ 991px) */
+@media (max-width: 991px) {
+  .container {
+    width: 90%;
+    height: 520px;
+  }
+
+  form {
+    padding: 0 30px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+}
+
+/* Mobile (≤ 768px) */
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    height: auto;
+    min-height: 520px;
+  }
+
+  .formContainer {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .signInContainer,
+  .signUpContainer {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    z-index: 5;
+  }
+
+  /* Hide overlay on mobile */
+  .overlayContainer {
+    display: none;
+  }
+
+  form {
+    padding: 40px 20px;
+  }
+
+  input,
+  button {
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+}
+
+/* Small mobiles (≤ 480px) */
+@media (max-width: 480px) {
+  .container {
+    border-radius: 6px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  span {
+    font-size: 13px;
+  }
+
+  p {
+    font-size: 14px;
+  }
+}

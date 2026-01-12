@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // 🔁 Choose ONE
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "http://localhost:5000/api/";
 // const BASE_URL = "https://your-backend.vercel.app";
 
 const axiosInstance = axios.create({
