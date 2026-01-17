@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import styles from "./ProductList.module.css";
@@ -8,42 +8,19 @@ import axiosInstance from "../../axios/Axios";
 import Modal from "../../components/resuablemodal/Modal";
 
 export default function ProductList() {
-const [products, setProducts] = useState([]);
-const [filteredProducts, setFilteredProducts] = useState([]);
-const [categories, setCategories] = useState(["All"]);
-const [selectedCategory, setSelectedCategory] = useState("All");
-const [searchTerm, setSearchTerm] = useState("");
-const [modalMessage, setModalMessage] = useState("");
-const [modalTitle, setModalTitle] = useState("Notice");
-const [modalOpen, setModalOpen] = useState(false); // ✅ FIX
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState(["All"]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch products
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axiosInstance.post("products/list", {
-          category: "",
-          search: "",
-        });
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalTitle, setModalTitle] = useState("Notice");
+  const [modalOpen, setModalOpen] = useState(false);
 
-        setProducts(response.data || []);
-        setFilteredProducts(response.data || []);
+  const isFirstRender = useRef(true); // 🔥 prevent double call
 
-        const dynamicCategories = [
-          "All",
-          ...new Set(response.data.map((p) => p.category)),
-        ];
-        setCategories(dynamicCategories);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-useEffect(() => {
-  const fetchFilteredProducts = async () => {
+  // ================= FETCH API =================
+  const fetchProducts = async () => {
     try {
       const payload = {
         category: selectedCategory === "All" ? "" : selectedCategory,
@@ -52,32 +29,47 @@ useEffect(() => {
 
       const res = await axiosInstance.post("products/list", payload);
 
-      setFilteredProducts(res.data || []);
+      setProducts(res.data || []);
+
+      // categories only once
+      if (isFirstRender.current) {
+        const dynamicCategories = [
+          "All",
+          ...new Set(res.data.map((p) => p.category)),
+        ];
+        setCategories(dynamicCategories);
+        isFirstRender.current = false;
+      }
     } catch (error) {
-      console.error("Filter API error:", error);
+      console.error("API Error:", error);
     }
   };
 
-  fetchFilteredProducts();
-}, [selectedCategory, searchTerm]);
+  // ================= EFFECT =================
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProducts(); // single call only
+    }, 500); // debounce search
 
+    return () => clearTimeout(timer);
+  }, [selectedCategory, searchTerm]);
 
-  // 🔥 Add to Cart API (STATIC PAYLOAD)
-  const handleAddToCart = async () => {
+  // ================= ADD TO CART =================
+  const handleAddToCart = async (productId) => {
     try {
       const payload = {
         user_id: 1,
-        product_id: 5,
+        product_id: productId,
         quantity: 2,
       };
 
       const res = await axiosInstance.post("/cart/add", payload);
-      console.log("Add to Cart:", res.data);
+      console.log(res.data);
+
       setModalTitle("Success");
-      setModalMessage("Thanks for shopping with us! 🛍️ Your product has been added to the cart. This feature is currently under development and will be fully functional soon.");
+      setModalMessage("Thanks for shopping with us! 🛍️ Product added to cart.");
       setModalOpen(true);
     } catch (error) {
-      console.error("Add to cart error:", error);
       setModalTitle("Error");
       setModalMessage("Failed to add product!");
       setModalOpen(true);
@@ -88,7 +80,7 @@ useEffect(() => {
     <div className={styles.pageWrapper}>
       <h1 className={styles.title}>Our Products</h1>
 
-      {/* Category Filter */}
+      {/* Category */}
       <div className={styles.filterBar}>
         {categories.map((category) => (
           <button
@@ -114,14 +106,14 @@ useEffect(() => {
         />
       </div>
 
-      {/* Product Grid */}
+      {/* Products */}
       <div className={styles.grid}>
-        {filteredProducts.length === 0 ? (
+        {products.length === 0 ? (
           <p style={{ textAlign: "center", width: "100%" }}>
             No products found.
           </p>
         ) : (
-          filteredProducts.map((product) => {
+          products.map((product) => {
             const discountedPrice =
               product.price - (product.price * product.discount) / 100;
 
@@ -145,14 +137,16 @@ useEffect(() => {
                     <span className={styles.price}>₹{discountedPrice}</span>
                   </div>
 
-                  {/* 🔥 Add to Cart */}
-                  <Button onClick={handleAddToCart}>Add to Cart</Button>
+                  <Button onClick={() => handleAddToCart(product.id)}>
+                    Add to Cart
+                  </Button>
                 </div>
               </div>
             );
           })
         )}
       </div>
+
       {/* Modal */}
       <Modal
         show={modalOpen}
