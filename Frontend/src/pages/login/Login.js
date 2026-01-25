@@ -74,7 +74,7 @@ export default function Auth() {
               onClick={() => {
                 setModalTitle("Notice");
                 setModalMessage(
-                  "This feature is under development. Updates will be available soon."
+                  "This feature is currently under development. Updates will be available soon. Please sign in using the email ID provided in the description."
                 );
                 setModalOpen(true);
               }}
@@ -112,7 +112,7 @@ export default function Auth() {
                 e.preventDefault();
                 setModalTitle("Notice");
                 setModalMessage(
-                  "This feature is under development. Updates will be available soon."
+                  "This feature is currently under development. Updates will be available soon. Please sign in using the email ID provided in the description."
                 );
                 setModalOpen(true);
               }}

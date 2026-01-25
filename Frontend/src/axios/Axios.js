@@ -1,8 +1,9 @@
 import axios from "axios";
 
 // 🔁 Choose ONE
-const BASE_URL = "http://localhost:5000/api/";
-// const BASE_URL = "https://your-backend.vercel.app";
+// const BASE_URL = "http://localhost:5000/api/";
+const BASE_URL = "https://shopease-cc0c.onrender.com/api/";
+// const BASE_URL = process.env.REACT_APP_API_URL;
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
