@@ -58,7 +58,9 @@ export default function Auth() {
 
   return (
     <div className={styles.pageWrapper}>
-      <div className={`${styles.container} ${active ? styles.rightPanelActive : ""}`}>
+      <div
+        className={`${styles.container} ${active ? styles.rightPanelActive : ""}`}
+      >
         {/* Sign Up */}
         <div className={`${styles.formContainer} ${styles.signUpContainer}`}>
           <form>
@@ -74,7 +76,7 @@ export default function Auth() {
               onClick={() => {
                 setModalTitle("Notice");
                 setModalMessage(
-                  "This feature is currently under development. Updates will be available soon. Please sign in using the email ID provided in the description."
+                  "This feature is currently under development. Updates will be available soon. Please sign in using the email ID provided in the description.",
                 );
                 setModalOpen(true);
               }}
@@ -106,19 +108,20 @@ export default function Auth() {
               onChange={handleChange}
             />
 
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
+            {/* Replace the <a> with a button styled like a link */}
+            <button
+              type="button"
+              className={styles.forgotPasswordLink} // optional: style as a link
+              onClick={() => {
                 setModalTitle("Notice");
                 setModalMessage(
-                  "This feature is currently under development. Updates will be available soon. Please sign in using the email ID provided in the description."
+                  "This feature is currently under development. Updates will be available soon. Please sign in using the email ID provided in the description.",
                 );
                 setModalOpen(true);
               }}
             >
               Forgot your password?
-            </a>
+            </button>
 
             <Button type="submit">Sign In</Button>
           </form>
@@ -147,7 +150,11 @@ export default function Auth() {
       </div>
 
       {/* Modal */}
-      <Modal show={modalOpen} onClose={() => setModalOpen(false)} title={modalTitle}>
+      <Modal
+        show={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalTitle}
+      >
         <p>{modalMessage}</p>
       </Modal>
     </div>

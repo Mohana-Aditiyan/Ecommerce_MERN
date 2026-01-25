@@ -198,3 +198,12 @@ form {
     font-size: 14px;
   }
 }
+.forgotPasswordLink {
+  background: none;
+  border: none;
+  color: #007bff; /* Bootstrap link color */
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+}

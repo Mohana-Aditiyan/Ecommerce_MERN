@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import styles from "./ProductList.module.css";
@@ -17,10 +17,10 @@ export default function ProductList() {
   const [modalTitle, setModalTitle] = useState("Notice");
   const [modalOpen, setModalOpen] = useState(false);
 
-  const isFirstRender = useRef(true); // 🔥 prevent double call
+  const isFirstRender = useRef(true); // prevent double call
 
   // ================= FETCH API =================
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const payload = {
         category: selectedCategory === "All" ? "" : selectedCategory,
@@ -28,7 +28,6 @@ export default function ProductList() {
       };
 
       const res = await axiosInstance.post("products/list", payload);
-
       setProducts(res.data || []);
 
       // categories only once
@@ -43,7 +42,7 @@ export default function ProductList() {
     } catch (error) {
       console.error("API Error:", error);
     }
-  };
+  }, [selectedCategory, searchTerm]); // fetchProducts now depends on selectedCategory & searchTerm
 
   // ================= EFFECT =================
   useEffect(() => {
@@ -52,7 +51,7 @@ export default function ProductList() {
     }, 500); // debounce search
 
     return () => clearTimeout(timer);
-  }, [selectedCategory, searchTerm]);
+  }, [fetchProducts]); // ✅ useCallback makes this safe
 
   // ================= ADD TO CART =================
   const handleAddToCart = async (productId) => {
@@ -109,9 +108,7 @@ export default function ProductList() {
       {/* Products */}
       <div className={styles.grid}>
         {products.length === 0 ? (
-          <p style={{ textAlign: "center", width: "100%" }}>
-            No products found.
-          </p>
+          <p style={{ textAlign: "center", width: "100%" }}>No products found.</p>
         ) : (
           products.map((product) => {
             const discountedPrice =
@@ -148,11 +145,7 @@ export default function ProductList() {
       </div>
 
       {/* Modal */}
-      <Modal
-        show={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title={modalTitle}
-      >
+      <Modal show={modalOpen} onClose={() => setModalOpen(false)} title={modalTitle}>
         <p>{modalMessage}</p>
       </Modal>
     </div>
